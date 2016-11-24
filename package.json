@@ -11,15 +11,15 @@
   "dependencies": {
     "body-parser": "~1.15.2",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.2.0",
+    "debug": "~2.3.3",
     "express": "~4.14.0",
     "express-state": "^1.4.0",
     "morgan": "~1.7.0",
     "pug": "^2.0.0-beta4",
     "socket.io": "^1.4.6",
     "sqlite3": "^3.1.4",
-    "swagger-express-mw": "^0.6.0",
-    "uuid": "^2.0.2"
+    "swagger-express-mw": "^0.7.0",
+    "uuid": "^3.0.0"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,6 @@
   "devDependencies": {
     "assert": "^1.4.1",
     "supertest": "^2.0.0",
-    "validator": "^5.5.0"
+    "validator": "^6.1.0"
   }
 }
