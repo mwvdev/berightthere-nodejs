@@ -1,0 +1,96 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: Be right there
+host: localhost:3000
+basePath: /api
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /trip/checkin:
+    x-swagger-router-controller: checkin
+    get:
+      description: Create a trip and returns a UUID
+      operationId: checkin
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/CheckinResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /trip/{id}:
+    x-swagger-router-controller: checkout
+    delete:
+      description: Deletes a trip and its location data
+      operationId: checkout
+      parameters:
+        - name: id
+          in: path
+          description: The trip to delete
+          required: true
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Success
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /trip/{id}/addLocation:
+    x-swagger-router-controller: add_location
+    post:
+      consumes:
+        - application/x-www-form-urlencoded
+      description: Adds a location to the trip
+      operationId: addLocation
+      parameters:
+        - name: id
+          in: path
+          description: The trip to update with a new location
+          required: true
+          type: string
+          format: uuid
+        - name: latitude
+          in: formData
+          description: The latitude of the location
+          required: true
+          type: number
+          format: double
+        - name: longitude
+          in: formData
+          description: The longitude of the location
+          required: true
+          type: number
+          format: double
+      responses:
+        "200":
+          description: Success
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+definitions:
+  CheckinResponse:
+    required:
+      - uuid
+    properties:
+      uuid:
+        type: string
+        format: uuid
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string

@@ -1,0 +1,60 @@
+extends layout
+
+block content
+    div(id='map')
+
+    script.
+        var travelPath;
+        function createMarkers(locations) {
+            travelPath = new google.maps.Polyline({
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+            travelPath.setMap(map);
+            locations.forEach(function(location) {
+                createMarker(location);
+            });
+        }
+        function createMarker(location) {
+            travelPath.getPath().push(new google.maps.LatLng(location.lat, location.lng));
+            return new google.maps.Marker({
+                position: location,
+                map: map
+            });
+        }
+
+        var map;
+        function initMap() {
+            var locations = !{locations};
+
+            var mapCenter = { lat: 52.52690, lng: 13.38757 };
+            var latLngBounds;
+            if(locations.length > 0) {
+                latLngBounds = new google.maps.LatLngBounds();
+                for(var i = 0; i < locations.length; i++) {
+                    var location = locations[i];
+                    latLngBounds.extend(new google.maps.LatLng(location.lat, location.lng));
+                }
+                mapCenter = latLngBounds.getCenter();
+            }
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: mapCenter,
+                zoom: 8 } );
+            if(latLngBounds) {
+                map.fitBounds(latLngBounds);
+            }
+
+            createMarkers(locations);
+        }
+    script(src='https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey + '&callback=initMap', async, defer)
+    script(src='/socket.io/socket.io.js')
+    script.
+        var socket = io(window.location.host);
+        socket.on('connect', function() {
+            socket.emit('berightthere:subscribe', {uuid: !{uuid}});
+        });
+        socket.on('berightthere:newLocation', function (location) {
+            createMarker(location);
+        });

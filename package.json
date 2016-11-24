@@ -1,0 +1,33 @@
+{
+  "name": "berightthere",
+  "version": "1.0.0",
+  "description": "A NodeJS application server that can receive and display GPS coordinates using Google Maps",
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "mocha test/**/*.js"
+  },
+  "author": "mwvdev",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "~1.15.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "express": "~4.14.0",
+    "express-state": "^1.4.0",
+    "morgan": "~1.7.0",
+    "pug": "^2.0.0-beta4",
+    "socket.io": "^1.4.6",
+    "sqlite3": "^3.1.4",
+    "swagger-express-mw": "^0.6.0",
+    "uuid": "^2.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mwvdev/berightthere.git"
+  },
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "supertest": "^2.0.0",
+    "validator": "^5.5.0"
+  }
+}
