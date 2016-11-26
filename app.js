@@ -39,10 +39,6 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     }
 
     swaggerExpress.register(app);
-
-    if (swaggerExpress.runner.swagger.paths['/trip']) {
-        console.log('Deployed successfully at 0.0.0.0:3000/trip!');
-    }
 });
 
 module.exports = app;
