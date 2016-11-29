@@ -8,7 +8,7 @@ var config = require('../config');
 router.get('/', function(req, res, next) {
     var uuid = req.query.uuid;
     if(!uuid) {
-        return next(new Error('Invalid UUID specified'));
+        return next(new Error('No UUID specified'));
     }
 
     var db = require('../database');
