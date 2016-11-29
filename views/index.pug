@@ -24,29 +24,27 @@ block content
             });
         }
 
+        function fitBounds() {
+            var path = travelPath.getPath();
+            if(path.getLength() > 0) {
+                var latLngBounds = new google.maps.LatLngBounds();
+                for(var i = 0; i < path.getLength(); i++) {
+                    latLngBounds.extend(path.getAt(i));
+                }
+                map.fitBounds(latLngBounds);
+            }
+        }
+
         var map;
         function initMap() {
             var locations = !{locations};
 
             var mapCenter = { lat: 52.52690, lng: 13.38757 };
-            var latLngBounds;
-            if(locations.length > 0) {
-                latLngBounds = new google.maps.LatLngBounds();
-                for(var i = 0; i < locations.length; i++) {
-                    var location = locations[i];
-                    latLngBounds.extend(new google.maps.LatLng(location.lat, location.lng));
-                }
-                mapCenter = latLngBounds.getCenter();
-            }
-
             map = new google.maps.Map(document.getElementById('map'), {
                 center: mapCenter,
                 zoom: 8 } );
-            if(latLngBounds) {
-                map.fitBounds(latLngBounds);
-            }
-
             createMarkers(locations);
+            fitBounds();
         }
     script(src='https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey + '&callback=initMap', async, defer)
     script(src='/socket.io/socket.io.js')
@@ -57,4 +55,5 @@ block content
         });
         socket.on('berightthere:newLocation', function (location) {
             createMarker(location);
+            fitBounds();
         });

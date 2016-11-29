@@ -45,11 +45,7 @@ function findLocations(uuid, callback) {
         }
     }
 
-    function handleComplete(err, rowCount) {
-        if(rowCount === 0) {
-            return callback(new Error('Unknown UUID specified'));
-        }
-
+    function handleComplete(err) {
         return callback(err, locations);
     }
 
