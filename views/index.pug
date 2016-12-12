@@ -4,46 +4,70 @@ block content
     div(id='map')
 
     script.
-        var travelPath;
-        function createMarkers(locations) {
-            travelPath = new google.maps.Polyline({
-                strokeColor: '#FF0000',
-                strokeOpacity: 1.0,
-                strokeWeight: 2
-            });
-            travelPath.setMap(map);
-            locations.forEach(function(location) {
-                createMarker(location);
-            });
-        }
-        function createMarker(location) {
-            travelPath.getPath().push(new google.maps.LatLng(location.lat, location.lng));
-            return new google.maps.Marker({
-                position: location,
-                map: map
-            });
-        }
+        var map;
+        function initMap() {
+            var travelPath;
+            function initTravelPath(locations) {
+                travelPath = new google.maps.Polyline({
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+                travelPath.setMap(map);
+                locations.forEach(function(location) {
+                    updateTravelPath(location);
+                });
+            }
+            function updateTravelPath(location) {
+                travelPath.getPath().push(new google.maps.LatLng(location.lat, location.lng));
+            }
+            function createEndMarker(location) {
+                return new google.maps.Marker({
+                    animation: google.maps.Animation.BOUNCE,
+                    position: location,
+                    map: map
+                });
+            };
+            function updateEndMarker(marker, location) {
+                marker.setPosition(location);
+            }
 
-        function fitBounds() {
-            var path = travelPath.getPath();
-            if(path.getLength() > 0) {
+            function fitBounds() {
+                var path = travelPath.getPath();
+
                 var latLngBounds = new google.maps.LatLngBounds();
                 for(var i = 0; i < path.getLength(); i++) {
                     latLngBounds.extend(path.getAt(i));
                 }
-                map.fitBounds(latLngBounds);
+                if(path.getLength() > 0) {
+                    map.setCenter(latLngBounds.getCenter());
+                }
+                if(path.getLength() > 3) {
+                    map.fitBounds(latLngBounds);
+                }
             }
-        }
 
-        var map;
-        function initMap() {
             var locations = !{locations};
 
+            var mapDiv = document.getElementById('map');
             var mapCenter = { lat: 52.52690, lng: 13.38757 };
-            map = new google.maps.Map(document.getElementById('map'), {
+            map = new google.maps.Map(mapDiv, {
                 center: mapCenter,
-                zoom: 8 } );
-            createMarkers(locations);
+                zoom: 15 } );
+
+            var endMarker;
+            google.maps.event.addDomListener(mapDiv, 'berightthere:newLocation', function(location) {
+                updateTravelPath(location);
+                if(endMarker) {
+                    updateEndMarker(endMarker, location);
+                }
+                else {
+                    endMarker = createEndMarker(location);
+                }
+                fitBounds();
+            });
+
+            initTravelPath(locations);
             fitBounds();
         }
     script(src='https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey + '&callback=initMap', async, defer)
@@ -54,6 +78,6 @@ block content
             socket.emit('berightthere:subscribe', {uuid: !{uuid}});
         });
         socket.on('berightthere:newLocation', function (location) {
-            createMarker(location);
-            fitBounds();
+            var mapDiv = document.getElementById('map');
+            google.maps.event.trigger(mapDiv, 'berightthere:newLocation', location);
         });
