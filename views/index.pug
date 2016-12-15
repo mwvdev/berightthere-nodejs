@@ -11,25 +11,29 @@ block content
                 travelPath = new google.maps.Polyline({
                     strokeColor: '#FF0000',
                     strokeOpacity: 1.0,
-                    strokeWeight: 2
+                    strokeWeight: 3
                 });
                 travelPath.setMap(map);
+                populateTravelPath(locations);
+            }
+            function populateTravelPath(locations) {
                 locations.forEach(function(location) {
-                    updateTravelPath(location);
+                    addTravelPathLocation(location);
                 });
             }
-            function updateTravelPath(location) {
+            function addTravelPathLocation(location) {
                 travelPath.getPath().push(new google.maps.LatLng(location.lat, location.lng));
             }
-            function createEndMarker(location) {
+            function updateEndMarker(endMarker, location) {
+                if(endMarker) {
+                    endMarker.setMap(null);
+                }
+
                 return new google.maps.Marker({
                     position: location,
                     map: map
                 });
             };
-            function updateEndMarker(marker, location) {
-                marker.setPosition(location);
-            }
 
             function fitBounds() {
                 var path = travelPath.getPath();
@@ -56,13 +60,13 @@ block content
 
             var endMarker;
             google.maps.event.addDomListener(mapDiv, 'berightthere:newLocation', function(location) {
-                updateTravelPath(location);
-                if(endMarker) {
-                    updateEndMarker(endMarker, location);
-                }
-                else {
-                    endMarker = createEndMarker(location);
-                }
+                addTravelPathLocation(location);
+                endMarker = updateEndMarker(endMarker, location);
+                fitBounds();
+            });
+            google.maps.event.addDomListener(mapDiv, 'berightthere:sync', function(locations) {
+                travelPath.getPath().clear();
+                populateTravelPath(locations);
                 fitBounds();
             });
 
@@ -75,6 +79,13 @@ block content
         var socket = io(window.location.host);
         socket.on('connect', function() {
             socket.emit('berightthere:subscribe', {uuid: !{uuid}});
+        });
+        socket.on('reconnect', function() {
+            socket.emit('berightthere:syncRequest', {uuid: !{uuid}});
+        });
+        socket.on('berightthere:sync', function(locations) {
+            var mapDiv = document.getElementById('map');
+            google.maps.event.trigger(mapDiv, 'berightthere:sync', locations);
         });
         socket.on('berightthere:newLocation', function (location) {
             var mapDiv = document.getElementById('map');

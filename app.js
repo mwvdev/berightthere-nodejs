@@ -11,6 +11,7 @@ app.io = io;
 
 var SwaggerExpress = require('swagger-express-mw');
 
+var db = require('./database');
 var routes = require('./routes/index');
 
 app.set('views', path.join(__dirname, 'views'));
@@ -26,6 +27,14 @@ app.use('/', routes);
 io.on('connection', function(socket) {
     socket.on('berightthere:subscribe', function(data) {
         socket.join(data.uuid);
+    });
+
+    socket.on('berightthere:syncRequest', function(data) {
+        db.findLocations(data.uuid, function(err, locations) {
+            if(!err) {
+                socket.emit('berightthere:sync', locations);
+            }
+        })
     });
 });
 

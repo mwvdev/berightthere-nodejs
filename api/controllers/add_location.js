@@ -21,7 +21,7 @@ function addLocation(req, res) {
             return res.status(500).json({message: generateError() + ' Details:' + err});
         }
         if(this.changes === 0) {
-            return res.status(500).json({message: generateError('Unknown')});
+            return res.status(500).json({message: generateError()});
         }
 
         var location = {lat: latitude, lng: longitude};

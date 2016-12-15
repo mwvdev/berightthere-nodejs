@@ -10,30 +10,24 @@ db.serialize(function() {
 });
 
 function tripCheckin(uuid, callback) {
-    db.serialize(function() {
-        var statement = db.prepare('INSERT INTO trips VALUES (?)', function(err) {
-            if(err) {
-                callback(err);
-            }
-            else {
-                statement.run(uuid, callback);
-                statement.finalize();
-            }
-        });
+    var statement = db.prepare('INSERT INTO trips VALUES (?)', function(err) {
+        if(err) {
+            callback(err);
+        }
+        else {
+            statement.run(uuid, callback);
+            statement.finalize();
+        }
     });
 }
 
 function tripCheckout(uuid, callback) {
-    db.serialize(function() {
-        db.run('DELETE FROM locations WHERE uuid = (?)', uuid, callback);
-    });
+    db.run('DELETE FROM locations WHERE uuid = (?)', uuid, callback);
 }
 
 function storeLocation(uuid, latitude, longitude, callback) {
-    db.serialize(function() {
-        var occurred = Math.floor(Date.now() / 1000);
-        db.run('INSERT INTO locations VALUES (?, ?, ?, ?)', [uuid, latitude, longitude, occurred], callback);
-    });
+    var occurred = Math.floor(Date.now() / 1000);
+    db.run('INSERT INTO locations VALUES (?, ?, ?, ?)', [uuid, latitude, longitude, occurred], callback);
 }
 
 function findLocations(uuid, callback) {

@@ -1,6 +1,5 @@
 'use strict';
 
-var assert = require('assert');
 var request = require('supertest');
 var validator = require('validator');
 
