@@ -3,7 +3,9 @@ A NodeJS based server for receiving GPS coordinates and plotting a route using S
 
 The REST API allows developers to write software that can check-in, submit GPS coordinates for a route and checkout.
 
-The Express JS application allows end users to view a consantly up-to-date overview of a route using Google Maps and web sockets.
+The Express JS application allows end users to view a constantly up-to-date overview of a route using Google Maps and web sockets.
+
+This is mostly a fun project for trying out Swagger, socket.io and ExpressJS.
 
 ## Requirements
 
